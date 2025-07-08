@@ -3,383 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Tool Detector</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f7fa;
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #4CAF50;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .detected-tools {
-            margin-bottom: 30px;
-        }
-
-        .tool-item {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: transform 0.2s ease;
-        }
-
-        .tool-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .tool-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 8px;
-            text-transform: capitalize;
-        }
-
-        .tool-type {
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .tool-details {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .no-tools {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 40px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .footer {
-            text-align: center;
-            color: #666;
-            font-size: 0.8rem;
-            margin-top: 20px;
-        }
-    </style>
+    <title>DevTools Detection System</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🤖 AI Tool Detector</h1>
-            <p>Automatically detecting AI assistants and chat tools on this page</p>
-            <div class="status">
-                <div class="status-dot"></div>
-                <span>Monitoring Active</span>
-            </div>
-        </div>
-
+        <h1>DevTools Detection Demo</h1>
+        <p>This page demonstrates a DevTools detection system. Try opening your browser's developer tools to see the warning in action.</p>
+        
         <div class="content">
-            <div class="detected-tools">
-                <h2>Detected AI Tools</h2>
-                <div id="toolsList">
-                    <div class="no-tools">
-                        No AI tools detected yet. Open a page with AI assistants to see them here.
-                    </div>
-                </div>
-            </div>
-
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalCount">0</div>
-                    <div class="stat-label">Total Detected</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="interfaceCount">0</div>
-                    <div class="stat-label">Chat Interfaces</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="sidebarCount">0</div>
-                    <div class="stat-label">Sidebars</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="utilityCount">0</div>
-                    <div class="stat-label">Utilities</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>Detection started automatically • Monitoring DOM changes in real-time</p>
+            <h2>Sample Content</h2>
+            <p>This is some sample content to demonstrate that the warning overlay appears over the actual page content.</p>
+            <button onclick="showInfo()">Click me for info</button>
         </div>
     </div>
 
-    <script>
-        class SimpleAIDetector {
-            constructor() {
-                this.detectedTools = new Map();
-                this.observer = null;
-                this.stats = { total: 0, interfaces: 0, sidebars: 0, utilities: 0 };
-                this.init();
-            }
+    <!-- DevTools Warning Overlay -->
+    <div id="devtools-warning" class="warning-overlay hidden">
+        <div class="warning-content">
+            <div class="warning-header">
+                <h2>⚠️ Developer Tools Detected</h2>
+            </div>
+            <div class="warning-body">
+                <p>Developer tools are currently open. This may pose security risks.</p>
+                <p>Please close the developer tools to continue safely.</p>
+                <p id="cross-tab-info" class="cross-tab-warning" style="display: none;">
+                    <strong>⚠️ DevTools detected in another tab or window!</strong>
+                </p>
+            </div>
+            <div class="warning-footer">
+                <div id="detection-log">
+                    <h3>Detection Log:</h3>
+                    <div id="log-entries"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            init() {
-                console.log('🤖 AI Detector started automatically');
-                this.setupMutationObserver();
-                this.startDetection();
-            }
-
-            setupMutationObserver() {
-                this.observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.addedNodes.length) {
-                            mutation.addedNodes.forEach((node) => {
-                                if (node.nodeType === Node.ELEMENT_NODE) {
-                                    this.analyzeElement(node);
-                                    this.analyzeChildElements(node);
-                                }
-                            });
-                        }
-                    });
-                });
-            }
-
-            startDetection() {
-                this.observer.observe(document.body, {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                    attributeFilter: ['class', 'id']
-                });
-                
-                // Scan existing elements
-                this.scanExistingElements();
-            }
-
-            scanExistingElements() {
-                const allElements = document.querySelectorAll('*');
-                allElements.forEach(element => {
-                    if (element !== document.body && element !== document.documentElement) {
-                        this.analyzeElement(element);
-                    }
-                });
-            }
-
-            analyzeChildElements(parentElement) {
-                const children = parentElement.querySelectorAll('*');
-                children.forEach(child => this.analyzeElement(child));
-            }
-
-            analyzeElement(element) {
-                if (!element || this.isOwnElement(element)) return;
-
-                const aiInfo = this.identifyAITool(element);
-                if (aiInfo.isAI) {
-                    const toolKey = aiInfo.toolName + '_' + aiInfo.type;
-                    if (!this.detectedTools.has(toolKey)) {
-                        this.detectedTools.set(toolKey, {
-                            name: aiInfo.toolName,
-                            type: aiInfo.type,
-                            element: element,
-                            detected: new Date()
-                        });
-                        this.updateDisplay();
-                        console.log('🎯 Detected:', aiInfo.toolName, '(' + aiInfo.type + ')');
-                    }
-                }
-            }
-
-            identifyAITool(element) {
-                const className = element.className.toLowerCase();
-                const id = element.id.toLowerCase();
-                const combinedText = (className + ' ' + id).toLowerCase();
-
-                // AI Tool Detection Patterns
-                const aiTools = {
-                    'ChatGPT': ['chatgpt', 'openai'],
-                    'Claude': ['claude', 'anthropic'],
-                    'Aitopia': ['aitopia'],
-                    'GitHub Copilot': ['copilot', 'github-copilot'],
-                    'Google Bard': ['bard', 'gemini'],
-                    'Perplexity': ['perplexity'],
-                    'Mistral': ['mistral'],
-                    'Cohere': ['cohere'],
-                    'AI Assistant': ['assistant', 'ai-chat', 'chatbot', 'bot']
-                };
-
-                let detectedTool = 'Unknown AI Tool';
-                let isAI = false;
-
-                // Check for specific AI tools
-                for (const [toolName, patterns] of Object.entries(aiTools)) {
-                    if (patterns.some(pattern => combinedText.includes(pattern))) {
-                        detectedTool = toolName;
-                        isAI = true;
-                        break;
-                    }
-                }
-
-                // Additional AI indicators
-                const aiIndicators = [
-                    'chat', 'message', 'conversation', 'prompt', 'response',
-                    'sidebar', 'panel', 'widget', 'overlay'
-                ];
-
-                if (!isAI && aiIndicators.some(indicator => combinedText.includes(indicator))) {
-                    const computedStyle = window.getComputedStyle(element);
-                    const zIndex = parseInt(computedStyle.zIndex);
-                    
-                    if (computedStyle.position === 'fixed' && (zIndex > 100 || zIndex === -1)) {
-                        isAI = true;
-                        detectedTool = 'AI Tool';
-                    }
-                }
-
-                // Determine type
-                let type = 'utility';
-                if (combinedText.includes('sidebar') || combinedText.includes('panel')) {
-                    type = 'sidebar';
-                } else if (combinedText.includes('chat') || combinedText.includes('message') || element.querySelector('textarea')) {
-                    type = 'interface';
-                }
-
-                return {
-                    isAI,
-                    toolName: detectedTool,
-                    type
-                };
-            }
-
-            isOwnElement(element) {
-                return element.closest('.container') || 
-                       element.tagName === 'SCRIPT' || 
-                       element.tagName === 'STYLE';
-            }
-
-            updateDisplay() {
-                const toolsList = document.getElementById('toolsList');
-                
-                if (this.detectedTools.size === 0) {
-                    toolsList.innerHTML = '<div class="no-tools">No AI tools detected yet.</div>';
-                    return;
-                }
-
-                toolsList.innerHTML = '';
-                this.stats = { total: 0, interfaces: 0, sidebars: 0, utilities: 0 };
-
-                this.detectedTools.forEach((tool, key) => {
-                    const toolDiv = document.createElement('div');
-                    toolDiv.className = 'tool-item';
-                    
-                    toolDiv.innerHTML = `
-                        <div class="tool-name">${tool.name}</div>
-                        <div class="tool-type">${tool.type}</div>
-                        <div class="tool-details">
-                            Detected at: ${tool.detected.toLocaleTimeString()}<br>
-                            Element: ${tool.element.tagName.toLowerCase()}${tool.element.id ? '#' + tool.element.id : ''}
-                        </div>
-                    `;
-                    
-                    toolsList.appendChild(toolDiv);
-                    
-                    // Update stats
-                    this.stats.total++;
-                    this.stats[tool.type + 's']++;
-                });
-
-                // Update stat display
-                document.getElementById('totalCount').textContent = this.stats.total;
-                document.getElementById('interfaceCount').textContent = this.stats.interfaces;
-                document.getElementById('sidebarCount').textContent = this.stats.sidebars;
-                document.getElementById('utilityCount').textContent = this.stats.utilities;
-            }
-        }
-
-        // Auto-start when page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            window.aiDetector = new SimpleAIDetector();
-        });
-    </script>
+    <script src="devtools-detector.js"></script>
+    <script src="main.js"></script>
 </body>
 </html> 
