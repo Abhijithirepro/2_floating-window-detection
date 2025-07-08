@@ -1,359 +1,210 @@
-class AIElementDetector {
+// Main application JavaScript for demo functionality
+
+// Demo function for the button
+function showInfo() {
+    alert('This is a demo page. The DevTools detection system is running in the background.');
+}
+
+// Additional DevTools detection methods for enhanced coverage
+class EnhancedDevToolsDetector {
     constructor() {
-        this.isDetecting = false;
-        this.detectedElements = new Set();
-        this.observer = null;
-        this.stats = {
-            total: 0,
-            aiInterfaces: 0,
-            aiSidebars: 0,
-            aiUtilities: 0
-        };
+        this.additionalChecks();
+    }
+
+    additionalChecks() {
+        // Method: Monitor for keyboard shortcuts
+        this.monitorKeyboardShortcuts();
         
-        this.init();
+        // Method: Monitor console object tampering
+        this.monitorConsoleObjectTampering();
+        
+        // Method: Detect via element inspection
+        this.detectElementInspection();
     }
 
-    init() {
-        this.bindEvents();
-        this.setupMutationObserver();
-        console.log('🤖 AI Element Detector initialized');
+    monitorKeyboardShortcuts() {
+        const devToolsShortcuts = [
+            { key: 'F12' },
+            { key: 'I', ctrlKey: true, shiftKey: true },
+            { key: 'J', ctrlKey: true, shiftKey: true },
+            { key: 'C', ctrlKey: true, shiftKey: true },
+            { key: 'K', ctrlKey: true, shiftKey: true },
+            { key: 'U', ctrlKey: true },
+            { key: 'S', ctrlKey: true }
+        ];
+
+        document.addEventListener('keydown', (e) => {
+            const shortcut = devToolsShortcuts.find(s => 
+                e.key === s.key && 
+                !!e.ctrlKey === !!s.ctrlKey && 
+                !!e.shiftKey === !!s.shiftKey &&
+                !!e.altKey === !!s.altKey
+            );
+
+            if (shortcut) {
+                // Small delay to allow DevTools to open
+                setTimeout(() => {
+                    if (window.devToolsDetector) {
+                        const result = window.devToolsDetector.detectDevTools();
+                        window.devToolsDetector.handleDevToolsStateChange(result.detected, 'Keyboard Shortcut');
+                    }
+                }, 100);
+            }
+        });
     }
 
-    bindEvents() {
-        document.getElementById('startDetection').addEventListener('click', () => this.startDetection());
-        document.getElementById('stopDetection').addEventListener('click', () => this.stopDetection());
-        document.getElementById('clearResults').addEventListener('click', () => this.clearResults());
-    }
 
-    setupMutationObserver() {
-        this.observer = new MutationObserver((mutations) => {
-            if (!this.isDetecting) return;
 
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE) {
-                            this.analyzeElement(node);
-                            this.analyzeChildElements(node);
+    monitorConsoleObjectTampering() {
+        // Store original console methods
+        const originalConsole = {
+            log: console.log,
+            warn: console.warn,
+            error: console.error,
+            info: console.info,
+            debug: console.debug
+        };
+
+        // Override console methods to detect usage
+        Object.keys(originalConsole).forEach(method => {
+            console[method] = function(...args) {
+                // If console is being used, there's a chance DevTools is open
+                setTimeout(() => {
+                    if (window.devToolsDetector) {
+                        const result = window.devToolsDetector.detectDevTools();
+                        if (result.detected) {
+                            window.devToolsDetector.handleDevToolsStateChange(true, 'Console Usage');
                         }
-                    });
-                }
-
-                // Check attribute changes that might indicate AI element injection
-                if (mutation.type === 'attributes' && 
-                    (mutation.attributeName === 'class' || 
-                     mutation.attributeName === 'id' || 
-                     mutation.attributeName.startsWith('data-'))) {
-                    this.analyzeElement(mutation.target);
-                }
-            });
+                    }
+                }, 10);
+                
+                return originalConsole[method].apply(console, args);
+            };
         });
     }
 
-    isAIRelatedElement(element, computedStyle) {
-        const className = element.className.toLowerCase();
-        const id = element.id.toLowerCase();
-        const attributes = Array.from(element.attributes).map(attr => `${attr.name}=${attr.value}`).join(' ').toLowerCase();
-        
-        // AI-specific identifiers
-        const aiIdentifiers = {
-            products: [
-                'aitopia', 'chatgpt', 'claude', 'anthropic', 'copilot', 'openai',
-                'bard', 'gemini', 'mistral', 'perplexity', 'cohere'
-            ],
-            features: [
-                'assistant', 'ai-chat', 'bot', 'completion', 'suggestion',
-                'prompt', 'response', 'message-list', 'conversation'
-            ],
-            frameworks: [
-                'data-v-app', // Vue.js root
-                'ng-version', // Angular
-                'data-react', // React
-                '_next',      // Next.js
-                'nuxt'       // Nuxt.js
-            ],
-            containers: [
-                'chat-container',
-                'message-container',
-                'conversation-container',
-                'ai-interface',
-                'assistant-container'
-            ]
-        };
+    detectElementInspection() {
+        // Create a hidden element that changes when inspected
+        const detectElement = document.createElement('div');
+        detectElement.style.display = 'none';
+        detectElement.innerHTML = '<p>DevTools Detection Element</p>';
+        document.body.appendChild(detectElement);
 
-        // Check for AI product names
-        const hasAIProduct = aiIdentifiers.products.some(product => 
-            className.includes(product) || 
-            id.includes(product) || 
-            attributes.includes(product)
-        );
-
-        // Check for AI feature indicators
-        const hasAIFeature = aiIdentifiers.features.some(feature => 
-            className.includes(feature) || 
-            id.includes(feature) || 
-            attributes.includes(feature)
-        );
-
-        // Check for framework-specific patterns often used by AI tools
-        const hasFrameworkPattern = aiIdentifiers.frameworks.some(framework => 
-            attributes.includes(framework)
-        );
-
-        // Check for typical AI interface containers
-        const hasAIContainer = aiIdentifiers.containers.some(container => 
-            className.includes(container) || 
-            id.includes(container)
-        );
-
-        // Check for textarea or input elements that might be prompt inputs
-        const isPromptInput = (
-            element.tagName === 'TEXTAREA' || 
-            (element.tagName === 'INPUT' && element.type === 'text')
-        ) && (
-            className.includes('prompt') || 
-            className.includes('chat') || 
-            className.includes('message') ||
-            id.includes('prompt') || 
-            id.includes('chat') || 
-            id.includes('message')
-        );
-
-        // Check for specific styling patterns common in AI interfaces
-        const hasAIStyling = (
-            computedStyle.position === 'fixed' &&
-            (parseInt(computedStyle.zIndex) > 1000 || computedStyle.zIndex === '-1') &&
-            (
-                element.querySelector('.message-list') ||
-                element.querySelector('[class*="chat"]') ||
-                element.querySelector('[class*="prompt"]') ||
-                element.querySelector('textarea')
-            )
-        );
-
-        // Determine the type of AI element for statistics
-        if (hasAIProduct || hasAIFeature || hasAIContainer) {
-            if (className.includes('sidebar') || id.includes('sidebar')) {
-                element.setAttribute('data-ai-type', 'sidebar');
-                this.stats.aiSidebars++;
-            } else if (isPromptInput || element.querySelector('textarea')) {
-                element.setAttribute('data-ai-type', 'interface');
-                this.stats.aiInterfaces++;
-            } else {
-                element.setAttribute('data-ai-type', 'utility');
-                this.stats.aiUtilities++;
-            }
-        }
-
-        return {
-            isAI: hasAIProduct || hasAIFeature || hasAIContainer || hasAIStyling || isPromptInput,
-            reasons: [
-                hasAIProduct && 'AI Product Identifier',
-                hasAIFeature && 'AI Feature Pattern',
-                hasFrameworkPattern && 'Framework Pattern',
-                hasAIContainer && 'AI Container Structure',
-                hasAIStyling && 'AI Interface Styling',
-                isPromptInput && 'Prompt Input Element'
-            ].filter(Boolean)
-        };
-    }
-
-    analyzeElement(element) {
-        if (!element || element === document.body || element === document.documentElement) return;
-        if (this.detectedElements.has(element)) return;
-
-        const computedStyle = window.getComputedStyle(element);
-        const aiAnalysis = this.isAIRelatedElement(element, computedStyle);
-        
-        if (aiAnalysis.isAI) {
-            this.detectedElements.add(element);
-            this.addToResults(element, computedStyle, aiAnalysis.reasons);
-            this.stats.total++;
-            this.updateStats();
-            
-            console.log('🤖 Detected AI element:', {
-                element,
-                tagName: element.tagName,
-                classes: element.className,
-                type: element.getAttribute('data-ai-type'),
-                reasons: aiAnalysis.reasons
+        // Monitor for changes to the element
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' || mutation.type === 'childList') {
+                    if (window.devToolsDetector) {
+                        window.devToolsDetector.handleDevToolsStateChange(true, 'Element Inspection');
+                    }
+                }
             });
-        }
-    }
+        });
 
-    addToResults(element, computedStyle, reasons) {
-        const resultsContainer = document.getElementById('detectedElements');
-        const noResults = resultsContainer.querySelector('.no-results');
-        if (noResults) noResults.remove();
-
-        const elementDiv = document.createElement('div');
-        elementDiv.className = 'detected-element';
-        
-        const type = element.getAttribute('data-ai-type') || 'unknown';
-        const tagName = element.tagName.toLowerCase();
-        const elementId = element.id ? `#${element.id}` : '';
-        const elementClasses = element.className ? `.${element.className.split(' ').join('.')}` : '';
-        
-        elementDiv.innerHTML = `
-            <div class="element-info">
-                <div class="element-tag">
-                    <span class="ai-type-badge ${type}">${type}</span>
-                    ${tagName}${elementId}${elementClasses}
-                </div>
-                <div class="element-properties">
-                    <div class="property">
-                        <div class="property-label">Detection Reasons:</div>
-                        <div class="property-value">${reasons.join(', ')}</div>
-                    </div>
-                    <div class="property">
-                        <div class="property-label">Position:</div>
-                        <div class="property-value">${computedStyle.position}</div>
-                    </div>
-                    <div class="property">
-                        <div class="property-label">Z-Index:</div>
-                        <div class="property-value">${computedStyle.zIndex}</div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        elementDiv.addEventListener('click', () => this.highlightElement(element));
-        resultsContainer.appendChild(elementDiv);
-        this.updateElementCount();
-    }
-
-    updateStats() {
-        document.getElementById('totalDetected').textContent = this.stats.total;
-        document.getElementById('aiInterfaces').textContent = this.stats.aiInterfaces;
-        document.getElementById('aiSidebars').textContent = this.stats.aiSidebars;
-        document.getElementById('aiUtilities').textContent = this.stats.aiUtilities;
-    }
-
-    startDetection() {
-        this.isDetecting = true;
-        
-        // Start observing DOM changes
-        this.observer.observe(document.body, {
-            childList: true,
-            subtree: true,
+        observer.observe(detectElement, {
             attributes: true,
-            attributeFilter: ['style', 'class']
+            childList: true,
+            subtree: true
         });
 
-        // Scan existing elements
-        this.scanExistingElements();
-
-        this.updateUI();
-        console.log('🚀 Detection started');
-    }
-
-    stopDetection() {
-        this.isDetecting = false;
-        this.observer.disconnect();
-        this.updateUI();
-        console.log('⏹️ Detection stopped');
-    }
-
-    scanExistingElements() {
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(element => {
-            if (element !== document.body && element !== document.documentElement) {
-                this.analyzeElement(element);
-            }
-        });
-    }
-
-    analyzeChildElements(parentElement) {
-        const children = parentElement.querySelectorAll('*');
-        children.forEach(child => this.analyzeElement(child));
-    }
-
-    highlightElement(element) {
-        // Remove previous highlights
-        document.querySelectorAll('.highlighted-element').forEach(el => {
-            el.classList.remove('highlighted-element');
-        });
-
-        // Add highlight style
-        element.classList.add('highlighted-element');
-        
-        // Add temporary highlight style if it doesn't exist
-        if (!document.getElementById('highlight-styles')) {
-            const style = document.createElement('style');
-            style.id = 'highlight-styles';
-            style.textContent = `
-                .highlighted-element {
-                    outline: 3px solid #ff6b6b !important;
-                    outline-offset: 2px !important;
-                    animation: pulse-highlight 2s ease-in-out;
+        // Also monitor for right-click events that might open context menu
+        document.addEventListener('contextmenu', (e) => {
+            setTimeout(() => {
+                if (window.devToolsDetector) {
+                    const result = window.devToolsDetector.detectDevTools();
+                    if (result.detected) {
+                        window.devToolsDetector.handleDevToolsStateChange(true, 'Context Menu');
+                    }
                 }
-                @keyframes pulse-highlight {
-                    0%, 100% { outline-color: #ff6b6b; }
-                    50% { outline-color: #ff9999; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // Scroll element into view
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        // Remove highlight after 3 seconds
-        setTimeout(() => {
-            element.classList.remove('highlighted-element');
-        }, 3000);
-    }
-
-    updateElementCount() {
-        document.getElementById('elementCount').textContent = `(${this.detectedElements.size})`;
-    }
-
-    clearResults() {
-        this.detectedElements.clear();
-        this.stats = { total: 0, aiInterfaces: 0, aiSidebars: 0, aiUtilities: 0 };
-        
-        const resultsContainer = document.getElementById('detectedElements');
-        resultsContainer.innerHTML = '<p class="no-results">No AI elements detected yet. Click "Start Detection" to begin monitoring.</p>';
-        
-        this.updateElementCount();
-        this.updateStats();
-        
-        // Remove any highlights
-        document.querySelectorAll('.highlighted-element').forEach(el => {
-            el.classList.remove('highlighted-element');
+            }, 200);
         });
-        
-        console.log('🧹 Results cleared');
-    }
-
-    updateUI() {
-        const startBtn = document.getElementById('startDetection');
-        const stopBtn = document.getElementById('stopDetection');
-        
-        if (this.isDetecting) {
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            startBtn.textContent = 'DETECTING...';
-        } else {
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            startBtn.textContent = 'START DETECTION';
-        }
     }
 }
 
-// Initialize the detector when DOM is loaded
+// Initialize enhanced detection when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.aiDetector = new AIElementDetector();
+    // Wait a bit for the main detector to initialize
+    setTimeout(() => {
+        new EnhancedDevToolsDetector();
+    }, 1000);
 });
 
-// Also provide manual initialization if needed
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.aiDetector) {
-            window.aiDetector = new AIElementDetector();
+
+
+// Prevent common bypass attempts
+(function() {
+    'use strict';
+    
+    // Disable common debugging methods
+    const originalEval = window.eval;
+    window.eval = function(code) {
+        if (typeof code === 'string' && code.includes('devToolsDetector')) {
+            return;
         }
+        return originalEval.call(this, code);
+    };
+
+    // Monitor for script injection attempts
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.tagName === 'SCRIPT') {
+                        const scriptContent = node.textContent || node.innerHTML;
+                        if (scriptContent.includes('devToolsDetector') || 
+                            scriptContent.includes('clearInterval') ||
+                            scriptContent.includes('warning-overlay')) {
+                            node.remove();
+                        }
+                    }
+                });
+            }
+        });
     });
-} else {
-    window.aiDetector = new AIElementDetector();
-} 
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+
+    // Protect against common anti-detection techniques
+    let propertyDescriptor = Object.getPropertyDescriptor(window, 'console');
+    if (!propertyDescriptor || propertyDescriptor.configurable) {
+        Object.defineProperty(window, 'console', {
+            value: window.console,
+            writable: false,
+            configurable: false
+        });
+    }
+})();
+
+// Add additional visual indicators
+function addVisualIndicators() {
+    // Add a small indicator in the corner when DevTools detection is active
+    const indicator = document.createElement('div');
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(231, 76, 60, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 1000;
+        user-select: none;
+        pointer-events: none;
+        font-family: Arial, sans-serif;
+    `;
+    indicator.textContent = '🛡️ DevTools Detection Active';
+    document.body.appendChild(indicator);
+
+    // Make the indicator pulse
+    setInterval(() => {
+        indicator.style.opacity = indicator.style.opacity === '0.5' ? '1' : '0.5';
+    }, 1500);
+}
+
+// Initialize visual indicators
+document.addEventListener('DOMContentLoaded', addVisualIndicators); 
