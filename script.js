@@ -1,257 +1,210 @@
-/* Basic page styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// Main application JavaScript for demo functionality
+
+// Demo function for the button
+function showInfo() {
+    alert('This is a demo page. The DevTools detection system is running in the background.');
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    margin-top: 50px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-h2 {
-    color: #34495e;
-    margin-bottom: 15px;
-}
-
-p {
-    margin-bottom: 15px;
-}
-
-button {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-}
-
-button:hover {
-    background: #2980b9;
-}
-
-.content {
-    margin-top: 30px;
-    padding: 20px;
-    background: #ecf0f1;
-    border-radius: 5px;
-}
-
-/* Warning Overlay Styles */
-.warning-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(231, 76, 60, 0.95);
-    z-index: 999999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-    animation: warningPulse 2s infinite alternate;
-}
-
-.warning-overlay.hidden {
-    display: none;
-}
-
-.warning-content {
-    background: white;
-    border-radius: 15px;
-    padding: 30px;
-    max-width: 600px;
-    width: 90%;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    border: 5px solid #e74c3c;
-    position: relative;
-    overflow: hidden;
-}
-
-.warning-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #e74c3c, #f39c12, #e74c3c);
-    animation: warningStripe 2s linear infinite;
-}
-
-.warning-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.warning-header h2 {
-    color: #e74c3c;
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-}
-
-.warning-body {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.warning-body p {
-    font-size: 1.2em;
-    color: #2c3e50;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.warning-footer {
-    border-top: 2px solid #ecf0f1;
-    padding-top: 20px;
-}
-
-#detection-log {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-#detection-log h3 {
-    color: #e74c3c;
-    margin-bottom: 15px;
-    font-size: 1.3em;
-}
-
-#log-entries {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 15px;
-    border-left: 4px solid #e74c3c;
-}
-
-.log-entry {
-    background: white;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border-left: 3px solid #f39c12;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9em;
-    color: #2c3e50;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.log-entry:last-child {
-    margin-bottom: 0;
-}
-
-.timestamp {
-    color: #7f8c8d;
-    font-weight: bold;
-}
-
-.detection-method {
-    color: #e74c3c;
-    font-weight: bold;
-}
-
-.cross-tab-warning {
-    background: #f39c12;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 15px;
-    border-left: 4px solid #e67e22;
-    animation: crossTabPulse 1.5s infinite;
-}
-
-@keyframes crossTabPulse {
-    0%, 100% {
-        background: #f39c12;
+// Additional DevTools detection methods for enhanced coverage
+class EnhancedDevToolsDetector {
+    constructor() {
+        this.additionalChecks();
     }
-    50% {
-        background: #e67e22;
+
+    additionalChecks() {
+        // Method: Monitor for keyboard shortcuts
+        this.monitorKeyboardShortcuts();
+        
+        // Method: Monitor console object tampering
+        this.monitorConsoleObjectTampering();
+        
+        // Method: Detect via element inspection
+        this.detectElementInspection();
+    }
+
+    monitorKeyboardShortcuts() {
+        const devToolsShortcuts = [
+            { key: 'F12' },
+            { key: 'I', ctrlKey: true, shiftKey: true },
+            { key: 'J', ctrlKey: true, shiftKey: true },
+            { key: 'C', ctrlKey: true, shiftKey: true },
+            { key: 'K', ctrlKey: true, shiftKey: true },
+            { key: 'U', ctrlKey: true },
+            { key: 'S', ctrlKey: true }
+        ];
+
+        document.addEventListener('keydown', (e) => {
+            const shortcut = devToolsShortcuts.find(s => 
+                e.key === s.key && 
+                !!e.ctrlKey === !!s.ctrlKey && 
+                !!e.shiftKey === !!s.shiftKey &&
+                !!e.altKey === !!s.altKey
+            );
+
+            if (shortcut) {
+                // Small delay to allow DevTools to open
+                setTimeout(() => {
+                    if (window.devToolsDetector) {
+                        const result = window.devToolsDetector.detectDevTools();
+                        window.devToolsDetector.handleDevToolsStateChange(result.detected, 'Keyboard Shortcut');
+                    }
+                }, 100);
+            }
+        });
+    }
+
+
+
+    monitorConsoleObjectTampering() {
+        // Store original console methods
+        const originalConsole = {
+            log: console.log,
+            warn: console.warn,
+            error: console.error,
+            info: console.info,
+            debug: console.debug
+        };
+
+        // Override console methods to detect usage
+        Object.keys(originalConsole).forEach(method => {
+            console[method] = function(...args) {
+                // If console is being used, there's a chance DevTools is open
+                setTimeout(() => {
+                    if (window.devToolsDetector) {
+                        const result = window.devToolsDetector.detectDevTools();
+                        if (result.detected) {
+                            window.devToolsDetector.handleDevToolsStateChange(true, 'Console Usage');
+                        }
+                    }
+                }, 10);
+                
+                return originalConsole[method].apply(console, args);
+            };
+        });
+    }
+
+    detectElementInspection() {
+        // Create a hidden element that changes when inspected
+        const detectElement = document.createElement('div');
+        detectElement.style.display = 'none';
+        detectElement.innerHTML = '<p>DevTools Detection Element</p>';
+        document.body.appendChild(detectElement);
+
+        // Monitor for changes to the element
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' || mutation.type === 'childList') {
+                    if (window.devToolsDetector) {
+                        window.devToolsDetector.handleDevToolsStateChange(true, 'Element Inspection');
+                    }
+                }
+            });
+        });
+
+        observer.observe(detectElement, {
+            attributes: true,
+            childList: true,
+            subtree: true
+        });
+
+        // Also monitor for right-click events that might open context menu
+        document.addEventListener('contextmenu', (e) => {
+            setTimeout(() => {
+                if (window.devToolsDetector) {
+                    const result = window.devToolsDetector.detectDevTools();
+                    if (result.detected) {
+                        window.devToolsDetector.handleDevToolsStateChange(true, 'Context Menu');
+                    }
+                }
+            }, 200);
+        });
     }
 }
 
-/* Animations */
-@keyframes warningPulse {
-    0% {
-        background: rgba(231, 76, 60, 0.9);
-    }
-    100% {
-        background: rgba(231, 76, 60, 0.95);
-    }
-}
+// Initialize enhanced detection when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for the main detector to initialize
+    setTimeout(() => {
+        new EnhancedDevToolsDetector();
+    }, 1000);
+});
 
-@keyframes warningStripe {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
-}
 
-/* Prevent user interactions when warning is shown */
-.warning-overlay.active ~ .container {
-    pointer-events: none;
-    filter: blur(2px);
-}
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .warning-content {
-        width: 95%;
-        padding: 20px;
-    }
+// Prevent common bypass attempts
+(function() {
+    'use strict';
     
-    .warning-header h2 {
-        font-size: 2em;
+    // Disable common debugging methods
+    const originalEval = window.eval;
+    window.eval = function(code) {
+        if (typeof code === 'string' && code.includes('devToolsDetector')) {
+            return;
+        }
+        return originalEval.call(this, code);
+    };
+
+    // Monitor for script injection attempts
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.tagName === 'SCRIPT') {
+                        const scriptContent = node.textContent || node.innerHTML;
+                        if (scriptContent.includes('devToolsDetector') || 
+                            scriptContent.includes('clearInterval') ||
+                            scriptContent.includes('warning-overlay')) {
+                            node.remove();
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+
+    // Protect against common anti-detection techniques
+    let propertyDescriptor = Object.getPropertyDescriptor(window, 'console');
+    if (!propertyDescriptor || propertyDescriptor.configurable) {
+        Object.defineProperty(window, 'console', {
+            value: window.console,
+            writable: false,
+            configurable: false
+        });
     }
-    
-    .warning-body p {
-        font-size: 1em;
-    }
+})();
+
+// Add additional visual indicators
+function addVisualIndicators() {
+    // Add a small indicator in the corner when DevTools detection is active
+    const indicator = document.createElement('div');
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(231, 76, 60, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 1000;
+        user-select: none;
+        pointer-events: none;
+        font-family: Arial, sans-serif;
+    `;
+    indicator.textContent = '🛡️ DevTools Detection Active';
+    document.body.appendChild(indicator);
+
+    // Make the indicator pulse
+    setInterval(() => {
+        indicator.style.opacity = indicator.style.opacity === '0.5' ? '1' : '0.5';
+    }, 1500);
 }
 
-/* Anti-tampering styles - make it harder to hide via inspect element */
-.warning-overlay {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* High specificity to prevent easy override */
-body .warning-overlay#devtools-warning.warning-overlay {
-    display: flex !important;
-    position: fixed !important;
-    z-index: 999999 !important;
-}
-
-body .warning-overlay#devtools-warning.warning-overlay.hidden {
-    display: none !important;
-} 
+// Initialize visual indicators
+document.addEventListener('DOMContentLoaded', addVisualIndicators); 
